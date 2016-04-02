@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">3 in a Row</string>
+    <string name="play_button_string">Play Game</string>
+    <string name="title_activity_game">Playing Game</string>
+    <string name="game_title">3 in a Row</string>
+</resources>
