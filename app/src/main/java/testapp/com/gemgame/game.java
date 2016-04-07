@@ -11,13 +11,15 @@ public class game extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
+        
+/* this is now old code
         String[] testArray = {"1", "3", "5"};
 
         ArrayAdapter adapter = new ArrayAdapter<>(this, R.layout.game_square_layout, testArray);
 
         ListView gameGrid = (ListView) findViewById(R.id.gameGrid);
         gameGrid.setAdapter(adapter);
+*/
 
     }
 
