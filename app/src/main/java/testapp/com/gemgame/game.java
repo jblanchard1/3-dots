@@ -1,7 +1,9 @@
 package testapp.com.gemgame;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 
 import java.util.Arrays;
@@ -33,6 +35,21 @@ public class game extends AppCompatActivity {
                 String buttonID = "button" + col + row;
                 int resID = getResources().getIdentifier(buttonID, "id", this.getPackageName());
                 buttons[col][row] = (Button) findViewById(resID);
+
+                //create final versions of col, row, buttons for OnClickListener
+                final int finalCol = col;
+                final int finalRow = row;
+                final Button[][] finalButtons = buttons;
+
+                //On button press, run "buttonPress" method with the column and row as parameters.
+                buttons[col][row].setOnClickListener(new View.OnClickListener() {
+                         @Override
+                         public void onClick(View v) {
+                             buttonPress(finalCol, finalRow, finalButtons);
+                         }
+                     }
+                );
+
             }
         }
 
@@ -203,6 +220,17 @@ public class game extends AppCompatActivity {
                 restedState = true;
             }
         }
+    }
+
+    /**
+     * This method runs every time a button is pressed and will receive the column and row of the button press.
+     * col and row should correspond to buttons[col][row] and board[col][row]
+     * @param col column of button
+     * @param row row of button
+     * @param buttons the object array of buttons
+     */
+    private void buttonPress(int col, int row, Button[][] buttons) {
+        buttons[col][row].setBackgroundColor(Color.BLUE);
     }
 
 
