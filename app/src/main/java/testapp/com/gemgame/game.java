@@ -79,8 +79,8 @@ public class game extends AppCompatActivity {
 
         board = new int[width][height]; //set size of board
 
-        int wC = 0; //width Counter
-        int hC = 0; //height Counter
+        int wC; //width Counter
+        int hC; //height Counter
         for (wC = 0; wC < width; wC++){
             for (hC = 0; hC < height; hC++) {
                 board[wC][hC] = (randomizer.nextInt(types)+1);
@@ -93,8 +93,8 @@ public class game extends AppCompatActivity {
      * @param buttons the grid of buttons which we will update to display the board.
      */
     private void displayBoard(Button[][] buttons){
-        int dWC = 0; //display Width Counter
-        int dHC = 0; //display Height Counter
+        int dWC; //display Width Counter
+        int dHC; //display Height Counter
 
         //count through each column one at a time
         for (dHC = 0; dHC < board[0].length; dHC++){
@@ -116,8 +116,8 @@ public class game extends AppCompatActivity {
      * Zeros are considered empty space.
      */
     private void collapseZeros(){
-        int cWC = 0; //collapse width counter
-        int cHC = 0; //collapse height counter
+        int cWC; //collapse width counter
+        int cHC; //collapse height counter
 
         //Go through each square of the board one by one.
         for (cWC = 0; cWC < board.length; cWC++){
@@ -151,7 +151,7 @@ public class game extends AppCompatActivity {
             Boolean[][] verSolveMatrix = new Boolean[board.length][board[0].length];
 
             //Initialize both matrices to "false"
-            int fillCounter = 0;
+            int fillCounter;
             for (fillCounter = 0; fillCounter < horSolveMatrix.length; fillCounter++){
                 Arrays.fill(horSolveMatrix[fillCounter], Boolean.FALSE);
             }
@@ -160,8 +160,8 @@ public class game extends AppCompatActivity {
             }
 
             //Check for horizontal solves, marking places with a horizontal solve as "true" in "horSolveMatrix"
-            int hWC = 0; //horizontal Width Counter
-            int hHC = 0; //horizontal Height Counter
+            int hWC; //horizontal Width Counter
+            int hHC; //horizontal Height Counter
             for (hHC = 0; hHC < board[0].length; hHC++){ //only works on rectangular boards
                 for (hWC = 1; hWC < (board.length-1); hWC++){ //the 1 and -1 make sure we don't overlap the edge of the board later
                     if (board[hWC][hHC] > 0) { //don't check the empty squares
@@ -176,8 +176,8 @@ public class game extends AppCompatActivity {
                 }
             }
             //check for vertical solves
-            int vWC = 0; //vertical Width Counter
-            int vHC = 0; //vertical Height Counter
+            int vWC; //vertical Width Counter
+            int vHC; //vertical Height Counter
             for (vHC = 1; vHC < (board[0].length-1); vHC++){//the 1 and -1 make sure we don't overlap the edge of the board later
                 for (vWC = 0; vWC < board.length; vWC++){
                     if (board[vWC][vHC] > 0) { //don't check the empty squares
@@ -193,8 +193,8 @@ public class game extends AppCompatActivity {
             }
 
             //Use the two matrices to put zeros in solved places on the game board
-            int cWC = 0; //change Width Counter
-            int cHC = 0; //change Height Counter
+            int cWC; //change Width Counter
+            int cHC; //change Height Counter
             for (cHC = 0; cHC < board[0].length; cHC++){
                 for (cWC = 0; cWC < board.length; cWC++){
                     if (horSolveMatrix[cWC][cHC]){
