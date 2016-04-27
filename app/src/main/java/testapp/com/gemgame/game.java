@@ -222,6 +222,8 @@ public class game extends AppCompatActivity {
         }
     }
 
+    private boolean buttonIsSelected = false;
+
     /**
      * This method runs every time a button is pressed and will receive the column and row of the button press.
      * col and row should correspond to buttons[col][row] and board[col][row]
@@ -230,7 +232,42 @@ public class game extends AppCompatActivity {
      * @param buttons the object array of buttons
      */
     private void buttonPress(int col, int row, Button[][] buttons) {
-        buttons[col][row].setBackgroundColor(Color.BLUE);
+        if (!buttonIsSelected) {
+            // tell system that a button is selected
+            buttonIsSelected = true;
+
+            //Make selected button blue
+            buttons[col][row].setTextColor(Color.BLUE);
+
+            //Make buttons next to selected button red
+            //left
+            if (col >= 1) {
+                buttons[col - 1][row].setTextColor(Color.RED);
+            }
+            //right
+            if (col < buttons.length) {
+                buttons[col + 1][row].setTextColor(Color.RED);
+            }
+            //above
+            if (row >= 1) {
+                buttons[col][row-1].setTextColor(Color.RED);
+            }
+            //below
+            if (col < buttons[0].length) {
+                buttons[col][row+1].setTextColor(Color.RED);
+            }
+
+        }
+        //If a button is already selected:
+        else {
+            buttonIsSelected = false;
+            //Make all the buttons black again
+            for (int i = 0; i < buttons.length; i++) {
+                for (int j = 0; j < buttons[0].length; j++) {
+                    buttons[i][j].setTextColor(Color.BLACK);
+                }
+            }
+        }
     }
 
 
