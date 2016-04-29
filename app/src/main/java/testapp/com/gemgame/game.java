@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -21,7 +22,7 @@ public class game extends AppCompatActivity {
         //Number of squares the game is tall
         int gameHeight = 5;
         //Number of different types of objects in the game
-        int gameComplexity = 2;
+        int gameComplexity = 3;
         //Random Seed for game board
         long randomSeed = 235;
 
@@ -223,6 +224,8 @@ public class game extends AppCompatActivity {
     }
 
     private boolean buttonIsSelected = false;
+    private int selectedCol;
+    private int selectedRow;
 
     /**
      * This method runs every time a button is pressed and will receive the column and row of the button press.
@@ -233,8 +236,9 @@ public class game extends AppCompatActivity {
      */
     private void buttonPress(int col, int row, Button[][] buttons) {
         if (!buttonIsSelected) {
-            // tell system that a button is selected
-            buttonIsSelected = true;
+            //record the row and column of the selected button
+            selectedCol = col;
+            selectedRow = row;
 
             //Make selected button blue
             buttons[col][row].setTextColor(Color.BLUE);
@@ -245,7 +249,7 @@ public class game extends AppCompatActivity {
                 buttons[col - 1][row].setTextColor(Color.RED);
             }
             //right
-            if (col < buttons.length) {
+            if (col < buttons.length - 1) {
                 buttons[col + 1][row].setTextColor(Color.RED);
             }
             //above
@@ -253,22 +257,57 @@ public class game extends AppCompatActivity {
                 buttons[col][row-1].setTextColor(Color.RED);
             }
             //below
-            if (col < buttons[0].length) {
+            if (row < buttons[0].length - 1) {
                 buttons[col][row+1].setTextColor(Color.RED);
             }
+
+            // tell system that a button is selected
+            buttonIsSelected = true;
 
         }
         //If a button is already selected:
         else {
-            buttonIsSelected = false;
+            //if the buttons are next to each other, swap them
+            if (
+                // the button is directly to the left or right of the selected button
+                (col == selectedCol - 1 || col == selectedCol + 1 && row == selectedRow) ||
+                // the button is directly above or below the selected button
+                (row == selectedRow - 1 || row == selectedRow + 1 && col == selectedCol)
+                    ) {
+                exchange(selectedCol, selectedRow, col, row);
+            } else {
+                Toast invalidButtonToast = Toast.makeText(getApplicationContext(), "Try again.", Toast.LENGTH_SHORT);
+                invalidButtonToast.show();
+            }
+
             //Make all the buttons black again
             for (int i = 0; i < buttons.length; i++) {
                 for (int j = 0; j < buttons[0].length; j++) {
                     buttons[i][j].setTextColor(Color.BLACK);
                 }
             }
+
+            //a button is no longer selected.
+            buttonIsSelected = false;
+
+            //Don't let pieces defy gravity
+            collapseZeros();
+            //update the game based on the moved pieces
+            solve();
+            //show the solved game.
+            displayBoard(buttons);
         }
+
     }
 
+    private void exchange(int firstX, int firstY, int secondX, int secondY){
+        int firstValue = board[firstX][firstY];
+        board[firstX][firstY] = board[secondX][secondY];
+        board[secondX][secondY] = firstValue;
+    }
+
+    /**
+     * Victory condition method needed
+     * **/
 
 }
