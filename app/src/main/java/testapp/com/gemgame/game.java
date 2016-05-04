@@ -22,9 +22,9 @@ public class game extends AppCompatActivity {
         //Number of squares the game is tall
         int gameHeight = 5;
         //Number of different types of objects in the game
-        int gameComplexity = 3;
+        int gameComplexity = 4;
         //Random Seed for game board
-        long randomSeed = 235;
+        long randomSeed = 24;
 
         //Create array to store references to the grid of buttons
         Button buttons[][] = new Button[gameWidth][gameHeight];
@@ -276,7 +276,7 @@ public class game extends AppCompatActivity {
                     ) {
                 exchange(selectedCol, selectedRow, col, row);
             } else {
-                Toast invalidButtonToast = Toast.makeText(getApplicationContext(), "Try again.", Toast.LENGTH_SHORT);
+                Toast invalidButtonToast = Toast.makeText(getApplicationContext(), R.string.invalid_button, Toast.LENGTH_SHORT);
                 invalidButtonToast.show();
             }
 
@@ -294,6 +294,8 @@ public class game extends AppCompatActivity {
             collapseZeros();
             //update the game based on the moved pieces
             solve();
+            //check if the game is won
+            gameWonCheck();
             //show the solved game.
             displayBoard(buttons);
         }
@@ -306,8 +308,33 @@ public class game extends AppCompatActivity {
         board[secondX][secondY] = firstValue;
     }
 
+    /** check if the game is won
+     *
+     */
+    private void gameWonCheck(){
+        int sumBottomRow = 0;
+        int sBRC; //sumBottomRowCounter
+
+        for (sBRC = 0; sBRC < board.length; sBRC++){
+            sumBottomRow = sumBottomRow + board[sBRC][board[0].length-1];
+        }
+
+        if (sumBottomRow == 0) {
+            //TODO: Implement game timer
+            //double gameTime = elapsedTime();
+
+            gameWon();
+        }
+    }
+
     /**
-     * Victory condition method needed
-     * **/
+     *  run this method when the game has been won
+     *
+     */
+    private void gameWon(){
+        //Pop up a toast if the player wins the game
+        Toast wonGameToast = Toast.makeText(getApplicationContext(), R.string.game_won, Toast.LENGTH_LONG);
+        wonGameToast.show();
+    }
 
 }
