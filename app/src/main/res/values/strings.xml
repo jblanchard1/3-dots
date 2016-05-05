@@ -5,4 +5,5 @@
     <string name="game_title">3 in a Row</string>
     <string name="invalid_button">Try again.</string>
     <string name="game_won">Congrats! You won!</string>
+    <string name="game_lost">Game over.</string>
 </resources>

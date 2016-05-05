@@ -63,8 +63,20 @@ public class game extends AppCompatActivity {
 
     }
 
-    //The game board
+    /**
+     *  The game board. It's an array of arrays, the columns are first and the rows are second
+     *  Format: board[column][row]
+     */
     private int[][] board;
+
+    /**
+     * An array to keep count of how many individual squares of each type are left.
+     * This will help us check if the game is unsolveable.
+     * The 0th place will be empty, so that each place will correspond to the type it is counting.
+     * For example, typeCounts[3] = --the number of 3s left on the board--
+     *
+     */
+    private int[] typeCounts;
 
     /**
      * Method to put random values into "board" matrix
@@ -78,15 +90,24 @@ public class game extends AppCompatActivity {
         Random randomizer = new Random(); // create new "Random" object
         randomizer.setSeed(seed); //set seed for "Random" object
 
-        board = new int[width][height]; //set size of board
+        //set size of board
+        board = new int[width][height];
+        typeCounts = new int[types + 1]; //put one more slot in the typeCounts than there are types, since 0s are empty space
+        int typeNumber; //the random integer representing the type of object in a particular square
 
         int wC; //width Counter
         int hC; //height Counter
         for (wC = 0; wC < width; wC++){
             for (hC = 0; hC < height; hC++) {
-                board[wC][hC] = (randomizer.nextInt(types)+1);
+                //get a random number for this square
+                typeNumber = (randomizer.nextInt(types)+1);
+                //put the number on the board at the current square
+                board[wC][hC] = typeNumber;
+                //increment the count, so we know how many squares have that number initially.
+                typeCounts[typeNumber]++;
             }
         }
+
     }
 
     /**
@@ -137,6 +158,7 @@ public class game extends AppCompatActivity {
      * The Solve function.
      * If 3 or more squares are aligned vertically or horizontally with the same value,
      * it replaces those squares with zero, runs the collapseZeros function, and checks again until it stops solving.
+     * It also updates "typeCounts" for the game over function (gameLostCheck)
      */
     private void solve(){
         //Variable to say whether the board is completely solved or needs to be solved again.
@@ -199,11 +221,39 @@ public class game extends AppCompatActivity {
             for (cHC = 0; cHC < board[0].length; cHC++){
                 for (cWC = 0; cWC < board.length; cWC++){
                     if (horSolveMatrix[cWC][cHC]){
+                        //if that square hasn't been solved yet, reduce the count by one for the type in that square
+                        if (board[cWC][cHC] != 0) {
+                            typeCounts[board[cWC][cHC]] = typeCounts[board[cWC][cHC]] - 1;
+                        }
+                        //The same thing for the square to the right
+                        if (board[cWC + 1][cHC] != 0) {
+                            typeCounts[board[cWC + 1][cHC]] = typeCounts[board[cWC + 1][cHC]] - 1;
+                        }
+                        //The same thing for the square to the left
+                        if (board[cWC - 1][cHC] != 0) {
+                            typeCounts[board[cWC - 1][cHC]] = typeCounts[board[cWC - 1][cHC]] - 1;
+                        }
+
+                        //Make all the squares 0 (interpreted as empty by collapseZeros)
                         board[cWC][cHC] = 0;
                         board[cWC + 1][cHC] = 0; //these shouldn't break anything due to precautions earlier
                         board[cWC - 1][cHC] = 0;
                     }
                     if (verSolveMatrix[cWC][cHC]){
+                        //if that square hasn't been solved yet, reduce the count by one for the type in that square
+                        if (board[cWC][cHC] != 0) {
+                            typeCounts[board[cWC][cHC]] = typeCounts[board[cWC][cHC]] - 1;
+                        }
+                        //The same thing for the square below
+                        if (board[cWC][cHC + 1] != 0) {
+                            typeCounts[board[cWC][cHC + 1]] = typeCounts[board[cWC][cHC + 1]] - 1;
+                        }
+                        //The same thing for the square above
+                        if (board[cWC][cHC - 1] != 0) {
+                            typeCounts[board[cWC][cHC - 1]] = typeCounts[board[cWC][cHC - 1]] - 1;
+                        }
+
+                        //make all those squares 0 (interpreted as empty)
                         board[cWC][cHC] = 0;
                         board[cWC][cHC + 1] = 0;
                         board[cWC][cHC - 1] = 0;
@@ -296,6 +346,8 @@ public class game extends AppCompatActivity {
             solve();
             //check if the game is won
             gameWonCheck();
+            //check if the game is lost
+            gameLostCheck();
             //show the solved game.
             displayBoard(buttons);
         }
@@ -336,5 +388,16 @@ public class game extends AppCompatActivity {
         Toast wonGameToast = Toast.makeText(getApplicationContext(), R.string.game_won, Toast.LENGTH_LONG);
         wonGameToast.show();
     }
+
+    private void gameLostCheck() {
+        for (int type = 1; type < typeCounts.length; type++) {
+            if (typeCounts[type] > 0 && typeCounts[type] < 3) {
+                Toast lostGameToast = Toast.makeText(getApplicationContext(), R.string.game_lost, Toast.LENGTH_LONG);
+                lostGameToast.show();
+                break;
+            }
+        }
+    }
+
 
 }
