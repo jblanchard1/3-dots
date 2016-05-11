@@ -27,7 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/game_text_placeholder"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:id="@+id/game_table">
 
         <TableRow>
             <Button
@@ -121,6 +122,14 @@
 
 
     </TableLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/game_table"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/undo_button"
+        android:text="@string/undo_button"/>
 
 
 </RelativeLayout>

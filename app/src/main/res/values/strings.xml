@@ -6,4 +6,6 @@
     <string name="invalid_button">Try again.</string>
     <string name="game_won">Congrats! You won!</string>
     <string name="game_lost">Game over.</string>
+    <string name="undo_button">Undo</string>
+    <string name="cant_undo">Can\'t undo.</string>
 </resources>

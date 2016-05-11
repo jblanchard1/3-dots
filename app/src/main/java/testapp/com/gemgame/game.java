@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -22,12 +23,12 @@ public class game extends AppCompatActivity {
         //Number of squares the game is tall
         int gameHeight = 5;
         //Number of different types of objects in the game
-        int gameComplexity = 4;
+        int gameComplexity = 3;
         //Random Seed for game board
         long randomSeed = 24;
 
-        //Create array to store references to the grid of buttons
-        Button buttons[][] = new Button[gameWidth][gameHeight];
+        //Create array to store references to the grid of buttons TODO: learn more about final
+        final Button buttons[][] = new Button[gameWidth][gameHeight];
 
         //Put references into the array for each button, based on the ids of the buttons.
         for (int col = 0; col < gameWidth; col++) {
@@ -37,16 +38,15 @@ public class game extends AppCompatActivity {
                 int resID = getResources().getIdentifier(buttonID, "id", this.getPackageName());
                 buttons[col][row] = (Button) findViewById(resID);
 
-                //create final versions of col, row, buttons for OnClickListener
+                //create final versions of col, row for OnClickListener
                 final int finalCol = col;
                 final int finalRow = row;
-                final Button[][] finalButtons = buttons;
 
                 //On button press, run "buttonPress" method with the column and row as parameters.
                 buttons[col][row].setOnClickListener(new View.OnClickListener() {
                          @Override
                          public void onClick(View v) {
-                             buttonPress(finalCol, finalRow, finalButtons);
+                             buttonPress(finalCol, finalRow, buttons);
                          }
                      }
                 );
@@ -54,11 +54,21 @@ public class game extends AppCompatActivity {
             }
         }
 
+        //Undo button runs undo() method and updates board
+        Button undoButton = (Button) findViewById(R.id.undo_button);
+        undoButton.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                  undo();
+                  displayBoard(buttons);
+              }
+          }
+        );
+
         //Create the game board array
         createBoard(gameWidth, gameHeight, gameComplexity, randomSeed);
-
-        //Display the initial game state
         solve();
+        undoSave();
         displayBoard(buttons);
 
     }
@@ -325,6 +335,19 @@ public class game extends AppCompatActivity {
                 (row == selectedRow - 1 || row == selectedRow + 1 && col == selectedCol)
                     ) {
                 exchange(selectedCol, selectedRow, col, row);
+
+                //Don't let pieces defy gravity
+                collapseZeros();
+                //update the game based on the moved pieces
+                solve();
+                //check if the game is won
+                gameWonCheck();
+                //check if the game is lost
+                gameLostCheck();
+                //save game state for Undo botton
+                undoSave();
+                //show the solved game.
+                displayBoard(buttons);
             } else {
                 Toast invalidButtonToast = Toast.makeText(getApplicationContext(), R.string.invalid_button, Toast.LENGTH_SHORT);
                 invalidButtonToast.show();
@@ -340,16 +363,7 @@ public class game extends AppCompatActivity {
             //a button is no longer selected.
             buttonIsSelected = false;
 
-            //Don't let pieces defy gravity
-            collapseZeros();
-            //update the game based on the moved pieces
-            solve();
-            //check if the game is won
-            gameWonCheck();
-            //check if the game is lost
-            gameLostCheck();
-            //show the solved game.
-            displayBoard(buttons);
+
         }
 
     }
@@ -399,5 +413,37 @@ public class game extends AppCompatActivity {
         }
     }
 
+    /**
+     * A list that contains a copy of the board for each move.
+     */
+    private ArrayList<int[][]> gameHistory= new ArrayList<>();
+
+/**
+ *  Method to save a copy of the current board state into the "gameHistory" array.
+ *
+ *  TODO: limit the undo list to prevent using way too much memory. Fix the bug where you can undo all the way back to an empty board somehow. Maybe disable undo if you win.
+ *
+ */
+   private void undoSave(){
+        int[][] currentBoard = new int[board.length][board[0].length];
+        for (int i = 0; i < board.length; i++) {
+                currentBoard[i] = board[i].clone();
+        }
+        gameHistory.add(currentBoard);
+    }
+
+    /**
+     * Return the board to the last saved state.
+     */
+    private void undo() {
+        if (gameHistory.size() >= 2) {
+            int undoIndex = gameHistory.size() - 2;
+            board = gameHistory.get(undoIndex);
+            gameHistory.remove(undoIndex + 1); //remove the last instance, since we're now on the board before it.
+        } else {
+            Toast cantUndoToast = Toast.makeText(getApplicationContext(), R.string.cant_undo, Toast.LENGTH_LONG);
+            cantUndoToast.show();
+        }
+    }
 
 }
