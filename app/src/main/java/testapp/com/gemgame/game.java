@@ -25,7 +25,7 @@ public class game extends AppCompatActivity {
         //Number of different types of objects in the game
         int gameComplexity = 3;
         //Random Seed for game board
-        long randomSeed = 24;
+        long randomSeed = 25;
 
         //Create array to store references to the grid of buttons TODO: learn more about final
         final Button buttons[][] = new Button[gameWidth][gameHeight];
@@ -63,6 +63,17 @@ public class game extends AppCompatActivity {
                   displayBoard(buttons);
               }
           }
+        );
+
+        //Start Over button returns the board to the initial state.
+        Button startOverButton = (Button) findViewById(R.id.start_over_button);
+        startOverButton.setOnClickListener(new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                      startOver();
+                      displayBoard(buttons);
+                  }
+              }
         );
 
         //Create the game board array
@@ -439,11 +450,18 @@ public class game extends AppCompatActivity {
         if (gameHistory.size() >= 2) {
             int undoIndex = gameHistory.size() - 2;
             board = gameHistory.get(undoIndex);
-            gameHistory.remove(undoIndex + 1); //remove the last instance, since we're now on the board before it.
+            gameHistory.remove(undoIndex + 1); //remove the last instance, since we're now on the one before it.
         } else {
             Toast cantUndoToast = Toast.makeText(getApplicationContext(), R.string.cant_undo, Toast.LENGTH_LONG);
             cantUndoToast.show();
         }
     }
 
+    /**
+     * Return the board to the first saved state.
+     */
+
+    private void startOver() {
+        board = gameHistory.get(0);
+    }
 }
