@@ -463,5 +463,7 @@ public class game extends AppCompatActivity {
 
     private void startOver() {
         board = gameHistory.get(0);
+        gameHistory.clear();
+        undoSave();
     }
 }
