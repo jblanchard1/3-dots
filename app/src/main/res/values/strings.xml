@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">3 in a Row</string>
-    <string name="play_button_string">Play Game</string>
+    <string name="play_button_string">Play</string>
     <string name="title_activity_game">Playing Game</string>
     <string name="game_title">3 in a Row</string>
     <string name="invalid_button">Try again.</string>
@@ -9,4 +9,7 @@
     <string name="undo_button">Undo</string>
     <string name="cant_undo">Can\'t undo.</string>
     <string name="start_over_button">Start over</string>
+    <string name="magic_number">Magic number:</string>
+    <string name="random">Random</string>
+    <string name="bad_random_seed">Sorry, the magic number didn\'t work :(</string>
 </resources>

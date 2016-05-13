@@ -24,8 +24,22 @@ public class game extends AppCompatActivity {
         int gameHeight = 5;
         //Number of different types of objects in the game
         int gameComplexity = 3;
-        //Random Seed for game board
-        long randomSeed = 25;
+
+
+        //Random Seed:
+        //First we need to get the extras from the intent:
+        Bundle extras = getIntent().getExtras();
+        //Now get the randomSeed from the extras.
+        long randomSeed;
+        if (extras != null) {
+            randomSeed = extras.getLong("RANDOM_SEED");
+        } else {
+            // a fallback random Seed
+            randomSeed = 25;
+            Toast badRandomSeedToast = Toast.makeText(getApplicationContext(), R.string.bad_random_seed, Toast.LENGTH_SHORT);
+            badRandomSeedToast.show();
+
+        }
 
         //Create array to store references to the grid of buttons TODO: learn more about final
         final Button buttons[][] = new Button[gameWidth][gameHeight];

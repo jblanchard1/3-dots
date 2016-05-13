@@ -9,12 +9,45 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="testapp.com.gemgame.MainActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="@string/magic_number"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/magicNumberText"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/magicNumberText"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/magicNumberLayout"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/random"
+            android:onClick="setRandom"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/magicNumberField"/>
+    </LinearLayout>
+
+
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/play_button_string"
         android:id="@+id/play_button"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="runGame"/>
+        android:onClick="runGame"
+        android:layout_below="@id/magicNumberLayout"
+        android:layout_centerHorizontal="true" />
+
+
 </RelativeLayout>
