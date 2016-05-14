@@ -23,7 +23,7 @@ public class game extends AppCompatActivity {
         //Number of squares the game is tall
         int gameHeight = 5;
         //Number of different types of objects in the game
-        int gameComplexity = 3;
+        int gameComplexity = 4;
 
 
         //Random Seed:

@@ -55,4 +55,10 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("RANDOM_SEED", randomSeed);
         startActivity(intent);
     }
+
+    public void helpPage(View view){
+        //launch the game activity!
+        Intent helpPageIntent = new Intent(this, HelpPage.class);
+        startActivity(helpPageIntent);
+    }
 }

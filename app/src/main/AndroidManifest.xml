@@ -18,12 +18,16 @@
         <activity
             android:name=".game"
             android:label="@string/title_activity_game"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".MainActivity">
-                <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="testapp.com.gemgame.MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="testapp.com.gemgame.MainActivity" />
         </activity>
+        <activity
+            android:name=".HelpPage"
+            android:label="@string/title_activity_help_page"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

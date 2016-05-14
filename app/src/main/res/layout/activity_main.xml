@@ -49,5 +49,14 @@
         android:layout_below="@id/magicNumberLayout"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/howToPlayButton"
+        android:text="@string/how_to_play"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:onClick="helpPage"/>
+
 
 </RelativeLayout>
