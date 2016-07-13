@@ -10,11 +10,20 @@
     tools:context="testapp.com.gemgame.MainActivity">
 
     <TextView
+        style="@style/GameTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:text="@string/game_title"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/main_title"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/magic_number"
         android:layout_centerHorizontal="true"
+        android:layout_below="@+id/main_title"
         android:id="@+id/magicNumberText"
         />
 
@@ -25,17 +34,19 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/magicNumberLayout"
         android:orientation="horizontal">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:textColor="@color/colorPrimaryDark"
+            android:ems="10"
+            android:id="@+id/magicNumberField"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/random"
             android:onClick="setRandom"/>
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/magicNumberField"/>
     </LinearLayout>
 
 

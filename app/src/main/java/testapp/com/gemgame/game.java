@@ -2,6 +2,7 @@ package testapp.com.gemgame;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -318,32 +319,38 @@ public class game extends AppCompatActivity {
      * @param col column of button
      * @param row row of button
      * @param buttons the object array of buttons
+     *                TODO: fix the rest of the colors so they aren't fixed values.
      */
     private void buttonPress(int col, int row, Button[][] buttons) {
+        int defaultButtonColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
+        int selectedButtonColor = ContextCompat.getColor(this, R.color.buttonSelectedColor);
+        int tradeButtonColor = ContextCompat.getColor(this, R.color.buttonTradeColor);
+
+
         if (!buttonIsSelected) {
             //record the row and column of the selected button
             selectedCol = col;
             selectedRow = row;
 
             //Make selected button blue
-            buttons[col][row].setTextColor(Color.BLUE);
+            buttons[col][row].setTextColor(selectedButtonColor);
 
             //Make buttons next to selected button red
             //left
             if (col >= 1) {
-                buttons[col - 1][row].setTextColor(Color.RED);
+                buttons[col - 1][row].setTextColor(tradeButtonColor);
             }
             //right
             if (col < buttons.length - 1) {
-                buttons[col + 1][row].setTextColor(Color.RED);
+                buttons[col + 1][row].setTextColor(tradeButtonColor);
             }
             //above
             if (row >= 1) {
-                buttons[col][row-1].setTextColor(Color.RED);
+                buttons[col][row-1].setTextColor(tradeButtonColor);
             }
             //below
             if (row < buttons[0].length - 1) {
-                buttons[col][row+1].setTextColor(Color.RED);
+                buttons[col][row+1].setTextColor(tradeButtonColor);
             }
 
             // tell system that a button is selected
@@ -378,10 +385,10 @@ public class game extends AppCompatActivity {
                 invalidButtonToast.show();
             }
 
-            //Make all the buttons black again
+            //Make all the buttons default color again
             for (int i = 0; i < buttons.length; i++) {
                 for (int j = 0; j < buttons[0].length; j++) {
-                    buttons[i][j].setTextColor(Color.BLACK);
+                    buttons[i][j].setTextColor(defaultButtonColor);
                 }
             }
 
@@ -428,6 +435,12 @@ public class game extends AppCompatActivity {
         wonGameToast.show();
     }
 
+    /**
+     * This function checks the "typecounts" array to make sure that the game can still be solved.
+     * TODO: Fix this check so that games that start with 3 or fewer of a type are still winnable.
+     * TODO: add an end-state indicator for when this occurs.
+     * TODO: reset when the "start over" button is pressed.
+     */
     private void gameLostCheck() {
         for (int type = 1; type < typeCounts.length; type++) {
             if (typeCounts[type] > 0 && typeCounts[type] < 3) {
