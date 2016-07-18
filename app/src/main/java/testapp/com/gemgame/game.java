@@ -18,7 +18,7 @@ public class game extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
+        //TODO: Get these values from an external resource file in the "values" folder instead of setting them here.
         //Number of squares the game is across
         int gameWidth = 5;
         //Number of squares the game is tall
@@ -199,9 +199,8 @@ public class game extends AppCompatActivity {
     private void solve(){
         //Variable to say whether the board is completely solved or needs to be solved again.
         boolean restedState = false; //true = board is finished solving.
-        //rested State Counter. We add to it if a solve was made, then count it down. There is a test after the solve code to make "restedState = true" and stop solving if it is zero.
-        int solveCounter = 0;
-        int solveHappened = 2; //Can make a number larger than one if multiple solve checks are needed.
+        int solveCounter = 0; //rested State Counter. We add to it if a solve was made, then count it down. There is a test after the solve code to make "restedState = true" and stop solving if it is zero.
+        int solveHappened = 2; //The number of times to double check for additional solves before declaring the board solved
 
         while (!restedState) {
             //We'll store the results of checking for horizontal solves here:
@@ -219,13 +218,13 @@ public class game extends AppCompatActivity {
             }
 
             //Check for horizontal solves, marking places with a horizontal solve as "true" in "horSolveMatrix"
-            int hWC; //horizontal Width Counter
+            int hWC; //horizontal Width Counter TODO: can we make these more clear by just reausing variables called "width" and "height"?
             int hHC; //horizontal Height Counter
             for (hHC = 0; hHC < board[0].length; hHC++){ //only works on rectangular boards
                 for (hWC = 1; hWC < (board.length-1); hWC++){ //the 1 and -1 make sure we don't overlap the edge of the board later
                     if (board[hWC][hHC] > 0) { //don't check the empty squares
                         if (board[hWC][hHC] == board[hWC-1][hHC]
-                                && board[hWC][hHC] == board[hWC+1][hHC]){
+                                && board[hWC][hHC] == board[hWC+1][hHC]) { //if this value is the same as the ones to the left and right
                             horSolveMatrix[hWC][hHC] = true;
                             solveCounter = solveHappened;
                         } else{
@@ -241,7 +240,7 @@ public class game extends AppCompatActivity {
                 for (vWC = 0; vWC < board.length; vWC++){
                     if (board[vWC][vHC] > 0) { //don't check the empty squares
                         if (board[vWC][vHC] == board[vWC][vHC-1]
-                                && board[vWC][vHC] == board[vWC][vHC+1]){
+                                && board[vWC][vHC] == board[vWC][vHC+1]){ //if this value is the same as the ones above and below
                             verSolveMatrix[vWC][vHC] = true;
                             solveCounter = solveHappened;
                         } else{
@@ -257,18 +256,20 @@ public class game extends AppCompatActivity {
             for (cHC = 0; cHC < board[0].length; cHC++){
                 for (cWC = 0; cWC < board.length; cWC++){
                     if (horSolveMatrix[cWC][cHC]){
-                        //if that square hasn't been solved yet, reduce the count by one for the type in that square
-                        if (board[cWC][cHC] != 0) {
-                            typeCounts[board[cWC][cHC]] = typeCounts[board[cWC][cHC]] - 1;
-                        }
-                        //The same thing for the square to the right
-                        if (board[cWC + 1][cHC] != 0) {
-                            typeCounts[board[cWC + 1][cHC]] = typeCounts[board[cWC + 1][cHC]] - 1;
-                        }
-                        //The same thing for the square to the left
-                        if (board[cWC - 1][cHC] != 0) {
-                            typeCounts[board[cWC - 1][cHC]] = typeCounts[board[cWC - 1][cHC]] - 1;
-                        }
+
+                        //update typeCounts for the game over function
+                            //if that square hasn't been solved yet, reduce the count by one for the type in that square
+                            if (board[cWC][cHC] != 0) {
+                                typeCounts[board[cWC][cHC]] = typeCounts[board[cWC][cHC]] - 1;
+                            }
+                            //The same thing for the square to the right
+                            if (board[cWC + 1][cHC] != 0) {
+                                typeCounts[board[cWC + 1][cHC]] = typeCounts[board[cWC + 1][cHC]] - 1;
+                            }
+                            //The same thing for the square to the left
+                            if (board[cWC - 1][cHC] != 0) {
+                                typeCounts[board[cWC - 1][cHC]] = typeCounts[board[cWC - 1][cHC]] - 1;
+                            }
 
                         //Make all the squares 0 (interpreted as empty by collapseZeros)
                         board[cWC][cHC] = 0;
@@ -276,18 +277,20 @@ public class game extends AppCompatActivity {
                         board[cWC - 1][cHC] = 0;
                     }
                     if (verSolveMatrix[cWC][cHC]){
-                        //if that square hasn't been solved yet, reduce the count by one for the type in that square
-                        if (board[cWC][cHC] != 0) {
-                            typeCounts[board[cWC][cHC]] = typeCounts[board[cWC][cHC]] - 1;
-                        }
-                        //The same thing for the square below
-                        if (board[cWC][cHC + 1] != 0) {
-                            typeCounts[board[cWC][cHC + 1]] = typeCounts[board[cWC][cHC + 1]] - 1;
-                        }
-                        //The same thing for the square above
-                        if (board[cWC][cHC - 1] != 0) {
-                            typeCounts[board[cWC][cHC - 1]] = typeCounts[board[cWC][cHC - 1]] - 1;
-                        }
+
+                        //update typeCounts for the game over function
+                            //if that square hasn't been solved yet, reduce the count by one for the type in that square
+                            if (board[cWC][cHC] != 0) {
+                                typeCounts[board[cWC][cHC]] = typeCounts[board[cWC][cHC]] - 1;
+                            }
+                            //The same thing for the square below
+                            if (board[cWC][cHC + 1] != 0) {
+                                typeCounts[board[cWC][cHC + 1]] = typeCounts[board[cWC][cHC + 1]] - 1;
+                            }
+                            //The same thing for the square above
+                            if (board[cWC][cHC - 1] != 0) {
+                                typeCounts[board[cWC][cHC - 1]] = typeCounts[board[cWC][cHC - 1]] - 1;
+                            }
 
                         //make all those squares 0 (interpreted as empty)
                         board[cWC][cHC] = 0;
@@ -319,7 +322,6 @@ public class game extends AppCompatActivity {
      * @param col column of button
      * @param row row of button
      * @param buttons the object array of buttons
-     *                TODO: fix the rest of the colors so they aren't fixed values.
      */
     private void buttonPress(int col, int row, Button[][] buttons) {
         int defaultButtonColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
@@ -380,7 +382,7 @@ public class game extends AppCompatActivity {
                 undoSave();
                 //show the solved game.
                 displayBoard(buttons);
-            } else {
+            } else { //TODO: add the case where you press the same button to deselect and this message doesn't pop up.
                 Toast invalidButtonToast = Toast.makeText(getApplicationContext(), R.string.invalid_button, Toast.LENGTH_SHORT);
                 invalidButtonToast.show();
             }
@@ -459,7 +461,7 @@ public class game extends AppCompatActivity {
 /**
  *  Method to save a copy of the current board state into the "gameHistory" array.
  *
- *  TODO: limit the undo list to prevent using way too much memory. Fix the bug where you can undo all the way back to an empty board somehow. Maybe disable undo if you win.
+ *  TODO: limit the undo list to prevent using way too much memory. Maybe disable undo if you win.
  *
  */
    private void undoSave(){
@@ -493,4 +495,6 @@ public class game extends AppCompatActivity {
         gameHistory.clear();
         undoSave();
     }
+
+
 }
