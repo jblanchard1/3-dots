@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="gameWidth">5</integer>
+    <integer name="gameHeight">5</integer>
+    <integer name="gameComplexity">4</integer>
+</resources>

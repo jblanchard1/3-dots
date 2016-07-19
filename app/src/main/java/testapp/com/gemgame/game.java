@@ -1,6 +1,6 @@
 package testapp.com.gemgame;
 
-import android.graphics.Color;
+
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,11 +20,11 @@ public class game extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         //TODO: Get these values from an external resource file in the "values" folder instead of setting them here.
         //Number of squares the game is across
-        int gameWidth = 5;
+        int gameWidth = getResources().getInteger(R.integer.gameWidth);
         //Number of squares the game is tall
-        int gameHeight = 5;
+        int gameHeight = getResources().getInteger(R.integer.gameHeight);
         //Number of different types of objects in the game
-        int gameComplexity = 4;
+        int gameComplexity = getResources().getInteger(R.integer.gameComplexity);
 
 
         //Random Seed:
@@ -42,7 +42,7 @@ public class game extends AppCompatActivity {
 
         }
 
-        //Create array to store references to the grid of buttons TODO: learn more about final
+        //Create array to store references to the grid of buttons
         final Button buttons[][] = new Button[gameWidth][gameHeight];
 
         //Put references into the array for each button, based on the ids of the buttons.
