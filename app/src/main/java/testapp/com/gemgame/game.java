@@ -329,63 +329,61 @@ public class game extends AppCompatActivity {
         int tradeButtonColor = ContextCompat.getColor(this, R.color.buttonTradeColor);
 
 
-        if (!buttonIsSelected) {
-            //record the row and column of the selected button
-            selectedCol = col;
-            selectedRow = row;
+        if (!buttonIsSelected) { //TODO: can no longer select empty squares. Is this desirable?
+            if (board[col][row] != 0) {
+                //record the row and column of the selected button
+                selectedCol = col;
+                selectedRow = row;
 
-            //Make selected button blue
-            buttons[col][row].setTextColor(selectedButtonColor);
+                //Make selected button the selected color
+                buttons[col][row].setTextColor(selectedButtonColor);
 
-            //Make buttons next to selected button red
-            //left
-            if (col >= 1) {
-                buttons[col - 1][row].setTextColor(tradeButtonColor);
-            }
-            //right
-            if (col < buttons.length - 1) {
-                buttons[col + 1][row].setTextColor(tradeButtonColor);
-            }
-            //above
-            if (row >= 1) {
-                buttons[col][row-1].setTextColor(tradeButtonColor);
-            }
-            //below
-            if (row < buttons[0].length - 1) {
-                buttons[col][row+1].setTextColor(tradeButtonColor);
+                //Make buttons next to selected button another color
+                //left
+                if (col >= 1) {
+                    buttons[col - 1][row].setTextColor(tradeButtonColor);
+                }
+                //right
+                if (col < buttons.length - 1) {
+                    buttons[col + 1][row].setTextColor(tradeButtonColor);
+                }
+                //above
+                if (row >= 1) {
+                    buttons[col][row - 1].setTextColor(tradeButtonColor);
+                }
+                //below
+                if (row < buttons[0].length - 1) {
+                    buttons[col][row + 1].setTextColor(tradeButtonColor);
+                }
+
+                // tell system that a button is selected
+                buttonIsSelected = true;
             }
 
-            // tell system that a button is selected
-            buttonIsSelected = true;
+            //Do nothing if it's 0. That means that's an empty space.
 
         }
         //If a button is already selected:
         else {
-            //if the buttons are next to each other, swap them
-            if (
-                // the button is directly to the left or right of the selected button
-                (col == selectedCol - 1 || col == selectedCol + 1 && row == selectedRow) ||
-                // the button is directly above or below the selected button
-                (row == selectedRow - 1 || row == selectedRow + 1 && col == selectedCol)
+            //Make sure the button isn't blank
+            //if (board[col][row] != 0) {
+                //if the buttons are next to each other, swap them
+                if (
+                        // the second button is directly to the left or right of the selected button
+                        ( (col == selectedCol - 1 || col == selectedCol + 1) && row == selectedRow) ||
+                        // OR the second button is directly above or below the selected button
+                        ( (row == selectedRow - 1 || row == selectedRow + 1) && col == selectedCol)
                     ) {
-                exchange(selectedCol, selectedRow, col, row);
+                    exchange(selectedCol, selectedRow, col, row);
 
-                //Don't let pieces defy gravity
-                collapseZeros();
-                //update the game based on the moved pieces
-                solve();
-                //check if the game is won
-                gameWonCheck();
-                //check if the game is lost
-                gameLostCheck();
-                //save game state for Undo botton
-                undoSave();
-                //show the solved game.
-                displayBoard(buttons);
-            } else { //TODO: add the case where you press the same button to deselect and this message doesn't pop up.
-                Toast invalidButtonToast = Toast.makeText(getApplicationContext(), R.string.invalid_button, Toast.LENGTH_SHORT);
-                invalidButtonToast.show();
-            }
+                    //update the board (perform basic game functions)
+                    updateBoard(buttons);
+
+                } else { //TODO: make this less annoying somehow. Maybe give it a repeat count after the first time you mess up
+                    Toast invalidButtonToast = Toast.makeText(getApplicationContext(), R.string.invalid_button, Toast.LENGTH_SHORT);
+                    invalidButtonToast.show();
+                }
+            //}
 
             //Make all the buttons default color again
             for (int i = 0; i < buttons.length; i++) {
@@ -401,6 +399,22 @@ public class game extends AppCompatActivity {
         }
 
     }
+
+    private void updateBoard(Button[][] buttons) {
+        //Don't let pieces defy gravity
+        collapseZeros();
+        //update the game based on the moved pieces
+        solve();
+        //check if the game is won
+        gameWonCheck();
+        //check if the game is lost
+        gameLostCheck();
+        //save game state for Undo button
+        undoSave();
+        //show the solved game.
+        displayBoard(buttons);
+    }
+
 
     private void exchange(int firstX, int firstY, int secondX, int secondY){
         int firstValue = board[firstX][firstY];
@@ -441,7 +455,7 @@ public class game extends AppCompatActivity {
      * This function checks the "typecounts" array to make sure that the game can still be solved.
      * TODO: Fix this check so that games that start with 3 or fewer of a type are still winnable.
      * TODO: add an end-state indicator for when this occurs.
-     * TODO: reset when the "start over" button is pressed.
+     * TODO: reset when the "start over" button is pressed. BUG: if you undo back to the beginning and then replay, you can't start over.
      */
     private void gameLostCheck() {
         for (int type = 1; type < typeCounts.length; type++) {
@@ -453,6 +467,25 @@ public class game extends AppCompatActivity {
         }
     }
 
+    /**
+     * Update type counts so that gameLostCheck functions correctly and you don't get a repeating "game over" when you undo or start over on game over.
+     */
+
+    private void updateTypeCounts() {
+        //set typeCounts array to 0.
+        Arrays.fill(typeCounts, 0);
+
+        //check each square on the board and add one to each type count for the type in the square, ignoring 0s
+        int tcWidth; //counter to increment through the width of board array; tc is typeCounts
+        int tcHeight; //counter to increment through the height of board array.
+        for (tcWidth = 0; tcWidth < board.length; tcWidth++){
+            for (tcHeight = 0; tcHeight < board[0].length; tcHeight++) {
+                if (board[tcWidth][tcHeight] > 0) {
+                    typeCounts[board[tcWidth][tcHeight]] += 1;
+                }
+            }
+        }
+    }
     /**
      * A list that contains a copy of the board for each move.
      */
@@ -480,6 +513,7 @@ public class game extends AppCompatActivity {
             int undoIndex = gameHistory.size() - 2;
             board = gameHistory.get(undoIndex);
             gameHistory.remove(undoIndex + 1); //remove the last instance, since we're now on the one before it.
+            updateTypeCounts();
         } else {
             Toast cantUndoToast = Toast.makeText(getApplicationContext(), R.string.cant_undo, Toast.LENGTH_LONG);
             cantUndoToast.show();
@@ -488,12 +522,14 @@ public class game extends AppCompatActivity {
 
     /**
      * Return the board to the first saved state.
+     * TODO: BUG: it stops working if you undo to the beginning and play over again.
      */
 
     private void startOver() {
         board = gameHistory.get(0);
         gameHistory.clear();
         undoSave();
+        updateTypeCounts();
     }
 
 

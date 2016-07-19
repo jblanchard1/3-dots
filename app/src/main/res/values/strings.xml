@@ -11,7 +11,7 @@
     <string name="start_over_button">Start over</string>
     <string name="magic_number">Magic number:</string>
     <string name="random">Random</string>
-    <string name="bad_random_seed">Sorry, the magic number didn\'t work :( Here's game #25 instead.</string>
+    <string name="bad_random_seed">Sorry, the magic number didn\'t work :( Here\'s game #25 instead.</string>
     <string name="how_to_play">How To Play</string>
     <string name="title_activity_help_page">HelpPage</string>
 </resources>
