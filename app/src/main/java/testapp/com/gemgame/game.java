@@ -4,6 +4,7 @@ package testapp.com.gemgame;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -18,7 +19,6 @@ public class game extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        //TODO: Get these values from an external resource file in the "values" folder instead of setting them here.
         //Number of squares the game is across
         int gameWidth = getResources().getInteger(R.integer.gameWidth);
         //Number of squares the game is tall
@@ -91,10 +91,11 @@ public class game extends AppCompatActivity {
               }
         );
 
-        //Create the game board array
+        //Start the game running
         createBoard(gameWidth, gameHeight, gameComplexity, randomSeed);
         solve();
         undoSave();
+        createWinCondition();
         displayBoard(buttons);
 
     }
@@ -113,6 +114,16 @@ public class game extends AppCompatActivity {
      *
      */
     private int[] typeCounts;
+
+    /**
+     * An array to keep track of what the typeCounts array should look like when the game is won
+     */
+    private int[] winCondition;
+
+    /**
+     * A list that contains a copy of the board for each move.
+     */
+    private ArrayList<int[][]> gameHistory= new ArrayList<>();
 
     /**
      * Method to put random values into "board" matrix
@@ -143,6 +154,8 @@ public class game extends AppCompatActivity {
                 typeCounts[typeNumber]++;
             }
         }
+
+        
 
     }
 
@@ -218,7 +231,7 @@ public class game extends AppCompatActivity {
             }
 
             //Check for horizontal solves, marking places with a horizontal solve as "true" in "horSolveMatrix"
-            int hWC; //horizontal Width Counter TODO: can we make these more clear by just reausing variables called "width" and "height"?
+            int hWC; //horizontal Width Counter
             int hHC; //horizontal Height Counter
             for (hHC = 0; hHC < board[0].length; hHC++){ //only works on rectangular boards
                 for (hWC = 1; hWC < (board.length-1); hWC++){ //the 1 and -1 make sure we don't overlap the edge of the board later
@@ -329,7 +342,7 @@ public class game extends AppCompatActivity {
         int tradeButtonColor = ContextCompat.getColor(this, R.color.buttonTradeColor);
 
 
-        if (!buttonIsSelected) { //TODO: can no longer select empty squares. Is this desirable?
+        if (!buttonIsSelected) {
             if (board[col][row] != 0) {
                 //record the row and column of the selected button
                 selectedCol = col;
@@ -365,25 +378,26 @@ public class game extends AppCompatActivity {
         }
         //If a button is already selected:
         else {
-            //Make sure the button isn't blank
-            //if (board[col][row] != 0) {
-                //if the buttons are next to each other, swap them
-                if (
-                        // the second button is directly to the left or right of the selected button
-                        ( (col == selectedCol - 1 || col == selectedCol + 1) && row == selectedRow) ||
-                        // OR the second button is directly above or below the selected button
-                        ( (row == selectedRow - 1 || row == selectedRow + 1) && col == selectedCol)
-                    ) {
-                    exchange(selectedCol, selectedRow, col, row);
 
-                    //update the board (perform basic game functions)
-                    updateBoard(buttons);
+            //if the buttons are next to each other, swap them
+            if (
+                    // the second button is directly to the left or right of the selected button
+                    ( (col == selectedCol - 1 || col == selectedCol + 1) && row == selectedRow) ||
+                    // OR the second button is directly above or below the selected button
+                    ( (row == selectedRow - 1 || row == selectedRow + 1) && col == selectedCol)
+                ) {
+                exchange(selectedCol, selectedRow, col, row);
 
-                } else { //TODO: make this less annoying somehow. Maybe give it a repeat count after the first time you mess up
+                //update the board (perform basic game functions)
+                updateBoard(buttons);
+
+            } else {
+
+                if (selectedCol != col && selectedRow != row) {//don't prompt if you click the same button a second time.
                     Toast invalidButtonToast = Toast.makeText(getApplicationContext(), R.string.invalid_button, Toast.LENGTH_SHORT);
                     invalidButtonToast.show();
                 }
-            //}
+            }
 
             //Make all the buttons default color again
             for (int i = 0; i < buttons.length; i++) {
@@ -415,6 +429,14 @@ public class game extends AppCompatActivity {
         displayBoard(buttons);
     }
 
+    /**
+     * exchange the value in the board array at (firstX, firstY) with the value in the array at (secondX, secondY)
+     * Swapping board[firstX][firstY] with board[secondX][secondY]
+     * @param firstX the width coordinate of the first square
+     * @param firstY the height coordinate of the first square
+     * @param secondX the width coordinate of the second square
+     * @param secondY the height coordinate of the second square
+     */
 
     private void exchange(int firstX, int firstY, int secondX, int secondY){
         int firstValue = board[firstX][firstY];
@@ -422,28 +444,37 @@ public class game extends AppCompatActivity {
         board[secondX][secondY] = firstValue;
     }
 
+    /**
+     * find what to solve for in cases where the initial setup gives the user less than 3 of a type to match
+     */
+    private void createWinCondition() {
+        //set up winCondition array to be the same as typeCounts array
+        winCondition = new int[typeCounts.length];
+
+        //if any of the typeCounts are below 3, save them in the winCondition array
+        for (int i = 0; i < typeCounts.length; i++) {
+            if (typeCounts[i] < 3) {
+                winCondition[i] = typeCounts[i];
+            } else {
+                winCondition[i] = 0;
+            }
+        }
+
+    }
+
+
     /** check if the game is won
      *
      */
     private void gameWonCheck(){
-        int sumBottomRow = 0;
-        int sBRC; //sumBottomRowCounter
-
-        for (sBRC = 0; sBRC < board.length; sBRC++){
-            sumBottomRow = sumBottomRow + board[sBRC][board[0].length-1];
-        }
-
-        if (sumBottomRow == 0) {
-            //TODO: Implement game timer
-            //double gameTime = elapsedTime();
-
+        if (Arrays.equals(typeCounts, winCondition)) {
             gameWon();
         }
     }
 
     /**
      *  run this method when the game has been won
-     *
+     * TODO: add an indicator for how many will be left when the game is won. Perhaps also indicate the numbers of everything.
      */
     private void gameWon(){
         //Pop up a toast if the player wins the game
@@ -453,18 +484,19 @@ public class game extends AppCompatActivity {
 
     /**
      * This function checks the "typecounts" array to make sure that the game can still be solved.
-     * TODO: Fix this check so that games that start with 3 or fewer of a type are still winnable.
-     * TODO: add an end-state indicator for when this occurs.
-     * TODO: reset when the "start over" button is pressed. BUG: if you undo back to the beginning and then replay, you can't start over.
-     */
+     * */
     private void gameLostCheck() {
-        for (int type = 1; type < typeCounts.length; type++) {
-            if (typeCounts[type] > 0 && typeCounts[type] < 3) {
-                Toast lostGameToast = Toast.makeText(getApplicationContext(), R.string.game_lost, Toast.LENGTH_LONG);
-                lostGameToast.show();
+        for (int i = 0; i < typeCounts.length; i++) {
+            if (typeCounts[i] < 3 && typeCounts[i] != winCondition[i]) {
+                gameLost();
                 break;
             }
         }
+    }
+
+    private void gameLost() {
+        Toast lostGameToast = Toast.makeText(getApplicationContext(), R.string.game_lost, Toast.LENGTH_LONG);
+        lostGameToast.show();
     }
 
     /**
@@ -486,10 +518,7 @@ public class game extends AppCompatActivity {
             }
         }
     }
-    /**
-     * A list that contains a copy of the board for each move.
-     */
-    private ArrayList<int[][]> gameHistory= new ArrayList<>();
+
 
 /**
  *  Method to save a copy of the current board state into the "gameHistory" array.

@@ -3,7 +3,7 @@
     <string name="play_button_string">Play</string>
     <string name="title_activity_game">Playing Game</string>
     <string name="game_title">3-Dots</string>
-    <string name="invalid_button">Try again.</string>
+    <string name="invalid_button">You can\'t move there.</string>
     <string name="game_won">Congrats! You won!</string>
     <string name="game_lost">Game over.</string>
     <string name="undo_button">Undo</string>
