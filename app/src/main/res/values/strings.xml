@@ -14,4 +14,10 @@
     <string name="bad_random_seed">Sorry, the magic number didn\'t work :( Here\'s game #25 instead.</string>
     <string name="how_to_play">How To Play</string>
     <string name="title_activity_help_page">HelpPage</string>
+    <string name="type_label_1">1: </string>
+    <string name="type_label_2">2: </string>
+    <string name="type_label_3">3: </string>
+    <string name="type_label_4">4: </string>
+    <string name="right_now">Now: </string>
+    <string name="to_win">To Win: </string>
 </resources>

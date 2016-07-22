@@ -127,7 +127,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/game_table"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:id="@+id/undo_row">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -139,6 +140,139 @@
             android:id="@+id/start_over_button"
             android:text="@string/start_over_button"/>
     </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/current_type_count"
+        android:layout_below="@+id/undo_row"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            style="@style/TypeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/type_label_1"
+            android:text="@string/type_label_1"
+            />
+        <TextView
+            style="@style/TypeCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/type_count_1" />
+
+        <TextView
+            style="@style/TypeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/type_label_2"
+            android:text="@string/type_label_2"/>
+        <TextView
+            style="@style/TypeCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/type_count_2"/>
+
+        <TextView
+            style="@style/TypeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/type_label_3"
+            android:text="@string/type_label_3"/>
+        <TextView
+            style="@style/TypeCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/type_count_3"/>
+
+        <TextView
+            style="@style/TypeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/type_label_4"
+            android:text="@string/type_label_4"/>
+        <TextView
+            style="@style/TypeCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/type_count_4"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/undo_row"
+        android:layout_toLeftOf="@id/current_type_count"
+        android:text="@string/right_now"/>
+
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/win_count"
+        android:layout_below="@+id/current_type_count"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            style="@style/TypeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/win_label_1"
+            android:text="@string/type_label_1"
+            />
+        <TextView
+            style="@style/TypeCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/win_count_1" />
+
+        <TextView
+            style="@style/TypeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/win_label_2"
+            android:text="@string/type_label_2"/>
+        <TextView
+            style="@style/TypeCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/win_count_2"/>
+
+        <TextView
+            style="@style/TypeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/win_label_3"
+            android:text="@string/type_label_3"/>
+        <TextView
+            style="@style/TypeCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/win_count_3"/>
+
+        <TextView
+            style="@style/TypeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/win_label_4"
+            android:text="@string/type_label_4"/>
+        <TextView
+            style="@style/TypeCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/win_count_4"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/win_count"
+        android:layout_below="@+id/current_type_count"
+        android:text="@string/to_win"/>
 
 
 </RelativeLayout>

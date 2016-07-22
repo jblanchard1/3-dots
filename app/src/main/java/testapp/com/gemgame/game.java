@@ -4,9 +4,9 @@ package testapp.com.gemgame;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class game extends AppCompatActivity {
         }
 
         //Create array to store references to the grid of buttons
-        final Button buttons[][] = new Button[gameWidth][gameHeight];
+        final Button buttons[][] = new Button[gameWidth][gameHeight]; //TODO: Make this a global variable you idiot.
 
         //Put references into the array for each button, based on the ids of the buttons.
         for (int col = 0; col < gameWidth; col++) {
@@ -91,12 +91,33 @@ public class game extends AppCompatActivity {
               }
         );
 
+        //TODO: Add function to expand or reduce the number of textviews based on the game's complexity.
+
+        //Type Count TextViews will display the amount of each type that is left on the board
+        typeCountViews = new TextView[gameComplexity + 1]; //same as length of TypeCounts, but that hasn't been initialized yet.
+        for (int type = 1; type < (gameComplexity + 1); type++) {
+            String typeCountViewID = "type_count_" + type;
+            int typeCountResID = getResources().getIdentifier(typeCountViewID, "id", this.getPackageName());
+            typeCountViews[type] = (TextView) findViewById(typeCountResID);
+        }
+
+        //Win Condition TextViews will display the amount of each type that the user needs to win the game
+        winConditionViews = new TextView[gameComplexity + 1]; //same as length of WinConditions, but that hasn't been initialized yet.
+        for (int type = 1; type < (gameComplexity + 1); type++) {
+            String winConditionViewID = "win_count_" + type;
+            int winConditionResID = getResources().getIdentifier(winConditionViewID, "id", this.getPackageName());
+            winConditionViews[type] = (TextView) findViewById(winConditionResID);
+        }
+
+
         //Start the game running
         createBoard(gameWidth, gameHeight, gameComplexity, randomSeed);
         solve();
         undoSave();
         createWinCondition();
+        displayWinCondition();
         displayBoard(buttons);
+        displayTypeCount();
 
     }
 
@@ -115,10 +136,14 @@ public class game extends AppCompatActivity {
      */
     private int[] typeCounts;
 
+    private TextView[] typeCountViews;
+
     /**
      * An array to keep track of what the typeCounts array should look like when the game is won
      */
     private int[] winCondition;
+
+    private TextView[] winConditionViews;
 
     /**
      * A list that contains a copy of the board for each move.
@@ -179,6 +204,16 @@ public class game extends AppCompatActivity {
                     buttons[dWC][dHC].setText(String.valueOf(board[dWC][dHC]));
                 }
             }
+        }
+    }
+
+
+    /**
+     *  Update the text for each type to show how many are left in typeCounts
+     */
+    private void displayTypeCount () {
+        for (int i = 1; i < typeCounts.length; i++) {
+            typeCountViews[i].setText(String.valueOf(typeCounts[i]));
         }
     }
 
@@ -325,8 +360,19 @@ public class game extends AppCompatActivity {
         }
     }
 
+    /**
+     * Detect whether a button is currently selected in the game (true = button is selected)
+     */
     private boolean buttonIsSelected = false;
+
+    /**
+     * The column where the selected button is located
+     */
     private int selectedCol;
+
+    /**
+     * The row where the selected button is located
+     */
     private int selectedRow;
 
     /**
@@ -414,6 +460,11 @@ public class game extends AppCompatActivity {
 
     }
 
+    /**
+     * All the methods to run after a move is made and the board needs to update to show what has changed
+     * @param buttons gonna fix this soon so it doesn't need this parameter.
+     */
+
     private void updateBoard(Button[][] buttons) {
         //Don't let pieces defy gravity
         collapseZeros();
@@ -427,6 +478,7 @@ public class game extends AppCompatActivity {
         undoSave();
         //show the solved game.
         displayBoard(buttons);
+        displayTypeCount();
     }
 
     /**
@@ -445,7 +497,8 @@ public class game extends AppCompatActivity {
     }
 
     /**
-     * find what to solve for in cases where the initial setup gives the user less than 3 of a type to match
+     * find what to solve for in cases where the initial setup gives the user less than 3 of a type
+     * Note: you can test this with seed 3, which has only 2 of the number 2.
      */
     private void createWinCondition() {
         //set up winCondition array to be the same as typeCounts array
@@ -462,6 +515,11 @@ public class game extends AppCompatActivity {
 
     }
 
+    private void displayWinCondition() {
+        for (int i = 1; i < winCondition.length; i++) {
+            winConditionViews[i].setText(String.valueOf(winCondition[i]));
+        }
+    }
 
     /** check if the game is won
      *
