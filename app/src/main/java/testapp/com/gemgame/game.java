@@ -35,7 +35,7 @@ public class game extends AppCompatActivity {
         if (extras != null) {
             randomSeed = extras.getLong("RANDOM_SEED");
         } else {
-            // a fallback random Seed
+            // a fallback random Seed TODO: fix bug that crashes game when no random seed is selected
             randomSeed = 25;
             Toast badRandomSeedToast = Toast.makeText(getApplicationContext(), R.string.bad_random_seed, Toast.LENGTH_SHORT);
             badRandomSeedToast.show();
@@ -43,7 +43,7 @@ public class game extends AppCompatActivity {
         }
 
         //Create array to store references to the grid of buttons
-        final Button buttons[][] = new Button[gameWidth][gameHeight]; //TODO: Make this a global variable you idiot.
+        buttons = new Button[gameWidth][gameHeight];
 
         //Put references into the array for each button, based on the ids of the buttons.
         for (int col = 0; col < gameWidth; col++) {
@@ -61,7 +61,7 @@ public class game extends AppCompatActivity {
                 buttons[col][row].setOnClickListener(new View.OnClickListener() {
                          @Override
                          public void onClick(View v) {
-                             buttonPress(finalCol, finalRow, buttons);
+                             buttonPress(finalCol, finalRow);
                          }
                      }
                 );
@@ -75,7 +75,7 @@ public class game extends AppCompatActivity {
               @Override
               public void onClick(View v) {
                   undo();
-                  displayBoard(buttons);
+                  displayBoard();
               }
           }
         );
@@ -86,7 +86,7 @@ public class game extends AppCompatActivity {
                   @Override
                   public void onClick(View v) {
                       startOver();
-                      displayBoard(buttons);
+                      displayBoard();
                   }
               }
         );
@@ -116,7 +116,7 @@ public class game extends AppCompatActivity {
         undoSave();
         createWinCondition();
         displayWinCondition();
-        displayBoard(buttons);
+        displayBoard();
         displayTypeCount();
 
     }
@@ -126,6 +126,11 @@ public class game extends AppCompatActivity {
      *  Format: board[column][row]
      */
     private int[][] board;
+
+    /**
+     * The button array that users click to interact with the game.
+     */
+    private Button buttons[][];
 
     /**
      * An array to keep count of how many individual squares of each type are left.
@@ -186,9 +191,8 @@ public class game extends AppCompatActivity {
 
     /**
      * Display board.
-     * @param buttons the grid of buttons which we will update to display the board.
      */
-    private void displayBoard(Button[][] buttons){
+    private void displayBoard(){
         int dWC; //display Width Counter
         int dHC; //display Height Counter
 
@@ -380,9 +384,8 @@ public class game extends AppCompatActivity {
      * col and row should correspond to buttons[col][row] and board[col][row]
      * @param col column of button
      * @param row row of button
-     * @param buttons the object array of buttons
      */
-    private void buttonPress(int col, int row, Button[][] buttons) {
+    private void buttonPress(int col, int row) {
         int defaultButtonColor = ContextCompat.getColor(this, R.color.colorPrimaryDark);
         int selectedButtonColor = ContextCompat.getColor(this, R.color.buttonSelectedColor);
         int tradeButtonColor = ContextCompat.getColor(this, R.color.buttonTradeColor);
@@ -435,7 +438,7 @@ public class game extends AppCompatActivity {
                 exchange(selectedCol, selectedRow, col, row);
 
                 //update the board (perform basic game functions)
-                updateBoard(buttons);
+                updateBoard();
 
             } else {
 
@@ -462,10 +465,9 @@ public class game extends AppCompatActivity {
 
     /**
      * All the methods to run after a move is made and the board needs to update to show what has changed
-     * @param buttons gonna fix this soon so it doesn't need this parameter.
      */
 
-    private void updateBoard(Button[][] buttons) {
+    private void updateBoard() {
         //Don't let pieces defy gravity
         collapseZeros();
         //update the game based on the moved pieces
@@ -477,7 +479,7 @@ public class game extends AppCompatActivity {
         //save game state for Undo button
         undoSave();
         //show the solved game.
-        displayBoard(buttons);
+        displayBoard();
         displayTypeCount();
     }
 
@@ -532,7 +534,6 @@ public class game extends AppCompatActivity {
 
     /**
      *  run this method when the game has been won
-     * TODO: add an indicator for how many will be left when the game is won. Perhaps also indicate the numbers of everything.
      */
     private void gameWon(){
         //Pop up a toast if the player wins the game
@@ -594,13 +595,16 @@ public class game extends AppCompatActivity {
 
     /**
      * Return the board to the last saved state.
+     * TODO: BUG: If you undo all the way back to the beginning, the undo just before the final undo (start over) does nothing.
      */
     private void undo() {
-        if (gameHistory.size() >= 2) {
+        if (gameHistory.size() > 2) {
             int undoIndex = gameHistory.size() - 2;
             board = gameHistory.get(undoIndex);
             gameHistory.remove(undoIndex + 1); //remove the last instance, since we're now on the one before it.
             updateTypeCounts();
+        } else if (gameHistory.size() == 2){
+            startOver();
         } else {
             Toast cantUndoToast = Toast.makeText(getApplicationContext(), R.string.cant_undo, Toast.LENGTH_LONG);
             cantUndoToast.show();
@@ -609,7 +613,6 @@ public class game extends AppCompatActivity {
 
     /**
      * Return the board to the first saved state.
-     * TODO: BUG: it stops working if you undo to the beginning and play over again.
      */
 
     private void startOver() {
