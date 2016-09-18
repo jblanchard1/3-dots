@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void runGame(View view){
         //launch the game activity!
-        Intent intent = new Intent(this, game.class);
+        Intent intent = new Intent(this, GameActivity.class);
 
         //get the TextView for the random seed for the game ("magic number")
         TextView magicNumberView = (TextView) findViewById(R.id.magicNumberField);
