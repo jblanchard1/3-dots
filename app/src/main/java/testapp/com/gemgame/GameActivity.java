@@ -40,16 +40,7 @@ public class GameActivity extends AppCompatActivity {
         //First we need to get the extras from the intent:
         Bundle extras = getIntent().getExtras();
         //Now get the randomSeed from the extras.
-        long randomSeed;
-        if (extras != null) {
-            randomSeed = extras.getLong("RANDOM_SEED");
-        } else {
-            // a fallback random Seed TODO: fix bug that crashes game when no random seed is selected
-            randomSeed = 25;
-            Toast badRandomSeedToast = Toast.makeText(getApplicationContext(), R.string.bad_random_seed, Toast.LENGTH_SHORT);
-            badRandomSeedToast.show();
-
-        }
+        long randomSeed = extras.getLong("RANDOM_SEED");
 
         /**
          * Create the game object

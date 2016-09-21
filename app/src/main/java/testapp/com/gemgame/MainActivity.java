@@ -3,8 +3,10 @@ package testapp.com.gemgame;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -47,13 +49,17 @@ public class MainActivity extends AppCompatActivity {
         //get the TextView for the random seed for the game ("magic number")
         TextView magicNumberView = (TextView) findViewById(R.id.magicNumberField);
 
-        //TODO: Make sure the field is an acceptable random seed.
         //get the random seed "magic number" as a string
         String randomSeedString = magicNumberView.getText().toString();
-        //convert to a long value
-        long randomSeed = Long.parseLong(randomSeedString);
-        intent.putExtra("RANDOM_SEED", randomSeed);
-        startActivity(intent);
+        if (!TextUtils.isEmpty(randomSeedString)) {
+            //convert to a long value
+            long randomSeed = Long.parseLong(randomSeedString);
+            intent.putExtra("RANDOM_SEED", randomSeed);
+            startActivity(intent);
+        } else {
+            Toast badRandomSeedToast = Toast.makeText(getApplicationContext(), R.string.bad_random_seed, Toast.LENGTH_SHORT);
+            badRandomSeedToast.show();
+        }
     }
 
     public void helpPage(View view){
