@@ -1,11 +1,14 @@
 package testapp.com.gemgame;
 
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,39 +51,71 @@ public class GameActivity extends AppCompatActivity {
         game = new GemGame(gameWidth, gameHeight, gameComplexity, randomSeed);
 
         /**
-         * Create the interface that will interact with the game
+         * Create the game interface
          */
-        //Create array to store references to the grid of buttons
+        //Find the Table Layout that we are currently using for the game interface
+        TableLayout gameTable = (TableLayout) findViewById(R.id.game_interface);
+
+                //Give buttons array the correct number of elements. (other methods use this array to interact with the buttons)
         buttons = new Button[gameWidth][gameHeight];
 
-        //Put references into the array for each button, based on the ids of the buttons.
-        for (int col = 0; col < gameWidth; col++) {
-            for (int row = 0; row < gameHeight; row++) {
-                //button ids must be in the form of button##, like "button04"
-                String buttonID = "button" + col + row;
-                int resID = getResources().getIdentifier(buttonID, "id", this.getPackageName());
-                buttons[col][row] = (Button) findViewById(resID);
+        //Find size of the entire window
+        Configuration configuration = this.getResources().getConfiguration();
+        int widthDP = configuration.screenWidthDp;
+        int heightDP = configuration.screenHeightDp; //not using until landscape mode is supported
+        float density = getResources().getDisplayMetrics().density;
 
-                //create final versions of col, row for OnClickListener
-                final int finalCol = col;
-                final int finalRow = row;
+        //Calculate the Height and Width of individual buttons in pixels.
+        int buttonHeight = (int) Math.floor(widthDP / gameHeight * density); //TODO: update for landscape. using width for portrait
+        int buttonWidth = (int) Math.floor(widthDP / gameWidth * density);
 
-                //On button press, run "buttonPress" method with the column and row as parameters.
-                buttons[col][row].setOnClickListener(new View.OnClickListener() {
+        //Set the layout height of the gameTable
+        gameTable.setMinimumHeight((int) Math.floor(widthDP * density));//TODO: need to fix for landscape mode
+
+        //Loop this once for each row in the game
+        for (int bRow = 0; bRow < gameHeight; bRow++){
+
+            //Create a TableRow object
+            TableRow currentRow = new TableRow(gameTable.getContext());
+
+            //Put the TableRow we just created into the game table
+            gameTable.addView(currentRow);
+
+            //Loop this once for each column in the game
+            for (int bCol = 0; bCol < gameWidth; bCol++){
+
+                //Create a button object
+                buttons[bCol][bRow] = new Button(this);
+                //buttons[bCol][bRow] = (Button) getLayoutInflater().inflate(R.layout.game_button, (ViewGroup) currentRow.getRootView(), false);
+
+                //Add the button object to the row we created in the outer loop
+                currentRow.addView(buttons[bCol][bRow]);
+
+                //Make the button the correct size
+                buttons[bCol][bRow].setHeight(buttonHeight);
+                buttons[bCol][bRow].setWidth(buttonWidth);
+                buttons[bCol][bRow].setMinimumWidth(0);
+                buttons[bCol][bRow].setMinimumHeight(0);
+
+                //Create a final version of the current row and column values so we can set these values permanently in the button listener
+                final int fCol = bCol;
+                final int fRow = bRow;
+
+                //run the buttonPress function for the current bCol and bRow when the button we just created is pressed
+                buttons[bCol][bRow].setOnClickListener(
+                    new View.OnClickListener() {
                          @Override
                          public void onClick(View v) {
-                             buttonPress(finalCol, finalRow);
+                             buttonPress(fCol, fRow);
                          }
                      }
                 );
-
             }
         }
 
+
         /**
-         * Now, initialize the other features of the game that aren't directly part of the interface,
-         * the undo and start over buttons, and the rows of type counts that tell you how many of
-         * each type are left.
+         * Initialize other buttons (To Win, Undo, Start Over)
          */
         //Undo button runs undo() method and updates board
         Button undoButton = (Button) findViewById(R.id.undo_button);
@@ -108,6 +143,20 @@ public class GameActivity extends AppCompatActivity {
               }
         );
 
+        //"How to win" button pops up a small window with the number of each type currently and the number remaining to win.
+        Button winConditionPopup = (Button) findViewById(R.id.win_condition_button);
+        winConditionPopup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: Make this :D
+            }
+        }
+        );
+
+        /**
+         *
+         * Need to replace this with a popup from the "how to win button.
+
         //Type Count TextViews will display the amount of each type that is left on the board
         typeCountViews = new TextView[gameComplexity + 1]; //same as length of TypeCounts, but that hasn't been initialized yet.
         for (int type = 1; type < (gameComplexity + 1); type++) {
@@ -123,12 +172,11 @@ public class GameActivity extends AppCompatActivity {
             int winConditionResID = getResources().getIdentifier(winConditionViewID, "id", this.getPackageName());
             winConditionViews[type] = (TextView) findViewById(winConditionResID);
         }
+         */
 
 
-        //Update the Game Board, Type Count, and Win Condition views to their initial states.
+        //Update the Game Board to its initial state.
         displayBoard();
-        displayTypeCount();
-        displayWinCondition();
 
     }
 
@@ -308,7 +356,6 @@ public class GameActivity extends AppCompatActivity {
         }
         //show the solved game.
         displayBoard();
-        displayTypeCount();
     }
 
 

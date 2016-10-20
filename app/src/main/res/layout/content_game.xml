@@ -20,113 +20,13 @@
         android:id="@+id/game_text_placeholder"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="39dp"
-        android:layout_marginBottom="39dp" />
-
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/game_text_placeholder"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/game_table">
-
-        <TableRow>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button00"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button10"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button20"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button30"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button40"/>
-        </TableRow>
-
-        <TableRow>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button01"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button11"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button21"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button31"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button41"/>
-        </TableRow>
-
-        <TableRow>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button02"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button12"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button22"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button32"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button42"/>
-        </TableRow>
-
-        <TableRow>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button03"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button13"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button23"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button33"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button43"/>
-        </TableRow>
-
-        <TableRow>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button04"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button14"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button24"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button34"/>
-            <Button
-                style="@style/GameButton"
-                android:id="@+id/button44"/>
-        </TableRow>
-
-
-    </TableLayout>
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/game_table"
+        android:layout_below="@+id/game_text_placeholder"
         android:layout_centerHorizontal="true"
         android:id="@+id/undo_row">
         <Button
@@ -134,15 +34,31 @@
             android:layout_height="wrap_content"
             android:id="@+id/undo_button"
             android:text="@string/undo_button"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/win_condition_button"
+            android:text="@string/win_condition_button"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/start_over_button"
             android:text="@string/start_over_button"/>
+
     </LinearLayout>
 
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/game_interface"
+        android:layout_below="@+id/undo_row" />
 
 
+
+
+<!-- Redesigning this element.
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -273,6 +189,9 @@
         android:layout_toLeftOf="@id/win_count"
         android:layout_below="@+id/current_type_count"
         android:text="@string/to_win"/>
+
+
+        -->
 
 
 </RelativeLayout>
