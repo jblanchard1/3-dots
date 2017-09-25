@@ -5,8 +5,14 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -20,6 +26,29 @@ public class GameActivity extends AppCompatActivity {
      */
 
     GemGame game;
+
+    /**
+     * The button array that users click to interact with the game.
+     */
+    private Button buttons[][];
+
+    /**
+     * Variables that will store size and configuration information to help with proper layout and display
+     */
+    private Configuration configuration;
+    private int widthDP;
+    private int heightDP;
+    private float density;
+
+    /**
+     * The array of Views that show what the type count would be to win.
+     */
+    private TextView[] winConditionViews;
+
+    /**
+     * How many different options there will be in the game.
+     */
+    int gameComplexity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +66,7 @@ public class GameActivity extends AppCompatActivity {
         int gameHeight = getResources().getInteger(R.integer.gameHeight);
 
         //Number of different types of objects in the game
-        int gameComplexity = getResources().getInteger(R.integer.gameComplexity);
+        gameComplexity = getResources().getInteger(R.integer.gameComplexity);
 
         //Random Seed:
         //First we need to get the extras from the intent:
@@ -56,14 +85,14 @@ public class GameActivity extends AppCompatActivity {
         //Find the Table Layout that we are currently using for the game interface
         TableLayout gameTable = (TableLayout) findViewById(R.id.game_interface);
 
-                //Give buttons array the correct number of elements. (other methods use this array to interact with the buttons)
+        //Give buttons array the correct number of elements. (other methods use this array to interact with the buttons)
         buttons = new Button[gameWidth][gameHeight];
 
-        //Find size of the entire window
+        //Get the configuration, height, width, and density of the screen for the layout
         Configuration configuration = this.getResources().getConfiguration();
-        int widthDP = configuration.screenWidthDp;
-        int heightDP = configuration.screenHeightDp; //not using until landscape mode is supported
-        float density = getResources().getDisplayMetrics().density;
+        widthDP = configuration.screenWidthDp;
+        heightDP = configuration.screenHeightDp; //not using until landscape mode is supported
+        density = getResources().getDisplayMetrics().density;
 
         //Calculate the Height and Width of individual buttons in pixels.
         int buttonHeight = (int) Math.floor(widthDP / gameHeight * density); //TODO: update for landscape. using width for portrait
@@ -143,36 +172,16 @@ public class GameActivity extends AppCompatActivity {
               }
         );
 
-        //"How to win" button pops up a small window with the number of each type currently and the number remaining to win.
-        Button winConditionPopup = (Button) findViewById(R.id.win_condition_button);
-        winConditionPopup.setOnClickListener(new View.OnClickListener() {
+        //"hint" button pops up a small window with the number of each type currently and the number remaining to win.
+        Button hintPopup = (Button) findViewById(R.id.hint_button);
+        hintPopup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Make this :D
+                hintPopup();
             }
         }
+
         );
-
-        /**
-         *
-         * Need to replace this with a popup from the "how to win button.
-
-        //Type Count TextViews will display the amount of each type that is left on the board
-        typeCountViews = new TextView[gameComplexity + 1]; //same as length of TypeCounts, but that hasn't been initialized yet.
-        for (int type = 1; type < (gameComplexity + 1); type++) {
-            String typeCountViewID = "type_count_" + type;
-            int typeCountResID = getResources().getIdentifier(typeCountViewID, "id", this.getPackageName());
-            typeCountViews[type] = (TextView) findViewById(typeCountResID);
-        }
-
-        //Win Condition TextViews will display the amount of each type that the user needs to win the game
-        winConditionViews = new TextView[gameComplexity + 1]; //same as length of WinConditions, but that hasn't been initialized yet.
-        for (int type = 1; type < (gameComplexity + 1); type++) {
-            String winConditionViewID = "win_count_" + type;
-            int winConditionResID = getResources().getIdentifier(winConditionViewID, "id", this.getPackageName());
-            winConditionViews[type] = (TextView) findViewById(winConditionResID);
-        }
-         */
 
 
         //Update the Game Board to its initial state.
@@ -180,22 +189,6 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
-
-
-    /**
-     * The button array that users click to interact with the game.
-     */
-    private Button buttons[][];
-
-    /**
-     * The array of Views that show the type counts
-     */
-    private TextView[] typeCountViews;
-
-    /**
-     * The array of Views that show what the type count would be to win.
-     */
-    private TextView[] winConditionViews;
 
     /**
      * Display board.
@@ -222,18 +215,44 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-
     /**
-     *  Update the text for each type to show how many are left in typeCounts
+     * Method that runs when the "Hint" button is clicked. Will popup a Toast showing the number of
+     * each type that is remaining, to enable easier solving of the puzzle.
+     * The toast should say something like "There are 1: 5, 2: 3, 3: 8, 4:7, of each type remaining
+     * to solve the puzzle." and if there are already too few of a certain type, it should say "you
+     * don't need to worry about type 3 to win" or whatever type(s) don't need to be solved.
      */
-    private void displayTypeCount () {
+
+    private void hintPopup() {
+        //Initialize string that will eventually be displayed in a toast
+        String hintString = "There are ";
+
         //get the type counts from the game object
         int[] typeCounts = game.getTypeCounts();
 
-        //iterate through the type counts objects and set each to the proper integer based on the current count
+        //iterate through the type counts and write "[type]:[number remaining], " for each
         for (int i = 1; i < typeCounts.length; i++) {
-            typeCountViews[i].setText(String.valueOf(typeCounts[i]));
+            hintString = hintString + String.valueOf(i) + ":" + String.valueOf(typeCounts[i]) + ", ";
         }
+
+        //finish first sentence.
+        hintString = hintString + "of each type remaining.";
+
+        //Now add an additional sentence saying to ignore one of the types if it is not necessary.
+
+        //Get win condition array
+        int[] winCondition = game.getWinCondition();
+
+        //check each type to see if there will be some remaining when the player wins
+        for (int i = 1; i < winCondition.length; i++) {
+            if (winCondition[i] > 0) {
+                //Add a sentence saying to ignore whichever value should be ignored
+                hintString = hintString + " Don't worry about the " + String.valueOf(i) + "s.";
+            }
+        }
+
+        Toast hintToast = Toast.makeText(getApplicationContext(), hintString, Toast.LENGTH_LONG);
+        hintToast.show();
     }
 
 
@@ -257,6 +276,7 @@ public class GameActivity extends AppCompatActivity {
      * col and row should correspond to buttons[col][row] and board[col][row]
      * @param col column of button
      * @param row row of button
+     * TODO: Possibly make this a swipe.
      */
     private void buttonPress(int col, int row) {
         int[][] board = game.getBoard();
@@ -318,7 +338,7 @@ public class GameActivity extends AppCompatActivity {
 
             } else {
 
-                if (selectedCol != col && selectedRow != row) {//TODO: don't prompt if you click the same button a second time.
+                if (selectedCol != col && selectedRow != row) {
                     Toast invalidButtonToast = Toast.makeText(getApplicationContext(), R.string.invalid_button, Toast.LENGTH_SHORT);
                     invalidButtonToast.show();
                 }
@@ -360,18 +380,6 @@ public class GameActivity extends AppCompatActivity {
 
 
 
-
-    private void displayWinCondition() {
-        //get winCondition
-        int[] winCondition = game.getWinCondition();
-
-        for (int i = 1; i < winCondition.length; i++) {
-            winConditionViews[i].setText(String.valueOf(winCondition[i]));
-        }
-    }
-
-
-
     /**
      *  run this method when the game has been won
      */
@@ -387,9 +395,6 @@ public class GameActivity extends AppCompatActivity {
         Toast lostGameToast = Toast.makeText(getApplicationContext(), R.string.game_lost, Toast.LENGTH_LONG);
         lostGameToast.show();
     }
-
-
-
 
 
 

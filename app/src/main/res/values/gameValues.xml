@@ -2,5 +2,5 @@
 <resources>
     <integer name="gameWidth">5</integer>
     <integer name="gameHeight">5</integer>
-    <integer name="gameComplexity">4</integer>
+    <integer name="gameComplexity">6</integer>
 </resources>

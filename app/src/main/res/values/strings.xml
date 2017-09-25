@@ -9,7 +9,7 @@
     <string name="undo_button">Undo</string>
     <string name="cant_undo">Can\'t undo.</string>
     <string name="start_over_button">Restart</string>
-    <string name="win_condition_button">How to win</string>
+    <string name="hint_button">Hint</string>
     <string name="magic_number">Magic number:</string>
     <string name="random">Random</string>
     <string name="bad_random_seed">You must type a number in the box, or you can press random.</string>

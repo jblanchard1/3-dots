@@ -8,6 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/main_layout"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".GameActivity"
     tools:showIn="@layout/activity_game">
@@ -38,8 +39,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/win_condition_button"
-            android:text="@string/win_condition_button"/>
+            android:id="@+id/hint_button"
+            android:text="@string/hint_button"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
